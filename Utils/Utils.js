@@ -5,6 +5,8 @@ const sendSuccess = (res, statusCode, message, data) => {
         message,
         data
     }
+
+    //console.log(data)
     return res.status(statusCode).json(result)
 
 }

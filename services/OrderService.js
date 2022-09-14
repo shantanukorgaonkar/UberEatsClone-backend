@@ -1,19 +1,33 @@
-const {client} = require('./config')
+const { client } = require('../db/config');
 
 const db = client.db(process.env.DBNAME)
 
+const getAllOrdersService = async () => {
 
-
-const testConnection = async ()=>{
-    
     try {
-
-        const result = await  db.command({ping:1})
-        console.log(result)
+        const ordersCollection = db.collection('orders')
+        const result = await ordersCollection.find().toArray()
+        //console.log(result)
+        return result
     } catch (error) {
-        console.log(error)
+        throw error
     }
 
 }
 
-module.exports = testConnection
+const addSingleOrderService = async (document) => {
+    try {
+        const ordersCollection = db.collection('orders');
+        const result = ordersCollection.insertOne(document);
+        return result;
+    } catch (error) {
+        throw error
+    }
+}
+
+
+
+module.exports = {
+    getAllOrdersService,
+    addSingleOrderService,
+}

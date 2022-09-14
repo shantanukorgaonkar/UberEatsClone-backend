@@ -5,7 +5,10 @@ const fetch = require('node-fetch');
 
 
 const getYelpRestaurants = async (req, res) => {
-    const city = req.body.city
+    const city = req.query.city
+    if(!city){
+        return sendError(res,400,'Invalid Request. Kindly check if city param exists ');
+    }
     const url = `https://api.yelp.com/v3/businesses/search?term="restaurants"&location=${city}`;
     const YELP_API_KEY = process.env.YELP_API_KEY;
 
@@ -25,7 +28,7 @@ const getYelpRestaurants = async (req, res) => {
             return sendSuccess(res,200,'Restaurants Found',restaurants);
 
     } catch (error) {
-        sendError(res,404,error.message);
+        return sendError(res,404,error.message);
     }
 }
 
