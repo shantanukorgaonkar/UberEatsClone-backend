@@ -20,13 +20,7 @@ const addOrder = async (req, res) => {
     const order = req.body;
     try {
         const createdOrder = await addSingleOrderService(order);
-
-        if (createdOrder.acknowledged === true) {
-            return sendSuccess(res, 201, 'Order Created Sucessfully', createdOrder);
-        }
-
-        return sendError(res, 500, 'The order could not be added to the database');
-
+        return sendSuccess(res, 201, 'Order Created Sucessfully', createdOrder);
     } catch (error) {
         return sendError(res, 400, error.message)
     }

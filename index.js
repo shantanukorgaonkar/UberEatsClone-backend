@@ -8,7 +8,7 @@ const getYelpRestaurants = require('./Utils/GetYelpRestaurantsAPI')
 const app = express();
 
 ConnectDB();
-
+  
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());

@@ -1,14 +1,13 @@
-const { client } = require('../db/config');
+// const { client } = require('../db/config');
 
-const db = client.db(process.env.DBNAME)
-
+// const db = client.db(process.env.DBNAME)
+const Order = require('../models/orderModel');
 const getAllOrdersService = async () => {
 
     try {
-        const ordersCollection = db.collection('orders')
-        const result = await ordersCollection.find().toArray()
-        //console.log(result)
-        return result
+        const orders = await Order.find();
+        console.log(orders);
+        return orders
     } catch (error) {
         throw error
     }
@@ -17,9 +16,9 @@ const getAllOrdersService = async () => {
 
 const addSingleOrderService = async (document) => {
     try {
-        const ordersCollection = db.collection('orders');
-        const result = ordersCollection.insertOne(document);
-        return result;
+        const createdOrder = await Order.create(document);
+        console.log(createdOrder);
+        return createdOrder;
     } catch (error) {
         throw error
     }
