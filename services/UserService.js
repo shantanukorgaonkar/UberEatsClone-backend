@@ -18,7 +18,24 @@ const addUserToDB = async (user) => {
         throw error;
     }
 
- 
 }
 
-module.exports = { addUserToDB , checkIfUserExists }
+const findUserById =async(id)=>{
+    try {
+        
+        const result = await User.findById(id).select('-password');
+        return result;
+    } catch (error) {
+        throw error
+    }
+}
+
+const findUserByEmail = async(email)=>{
+    try {
+        const result = await User.findOne({email})
+    } catch (error) {
+        
+    }
+}
+
+module.exports = { addUserToDB , checkIfUserExists , findUserById,findUserByEmail}
