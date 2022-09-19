@@ -2,8 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const {ConnectDB} = require('./db/config');
-const orderRoutes = require('./routes/OrderRoutes')
-const getYelpRestaurants = require('./Utils/GetYelpRestaurantsAPI')
+const orderRoutes = require('./routes/OrderRoutes');
+const getYelpRestaurants = require('./Utils/GetYelpRestaurantsAPI');
+const userRoutes= require('./routes/UserRoutes');
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 
 app.use('/api/v1/orders',orderRoutes);
+app.use('/api/v1/users',userRoutes);
 app.use('/api/v1/restaurants',getYelpRestaurants);
 
 app.get('*', (req, res) => res.status(200).send({
