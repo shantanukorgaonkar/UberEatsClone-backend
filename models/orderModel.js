@@ -9,11 +9,15 @@ const cartItemSchema = mongoose.Schema({
 
 
 const orderSchema = mongoose.Schema({
-
+    user :{
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref:'User'
+    },
     restaurantName:String,
     cartItems : [cartItemSchema],
     cartValue:Number,
 
-}, {timestamps:{createdAt:'created_at', updatedAt:'updated_at'}})
+}, {timestamps:true});
 
 module.exports = mongoose.model('Order', orderSchema);
