@@ -19,6 +19,10 @@ const VerifyAuth = async (req, res, next) => {
 
             req.user = await User.findById(decoded.id).select('-password');
 
+            if(!req.user){
+                return sendError(res,404,"User does not exist")
+            }
+
             next();
 
         } catch (error) {

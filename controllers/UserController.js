@@ -1,4 +1,4 @@
-const { addUserToDB, checkIfUserExists, findUserById, findUserByEmail } = require('../services/UserService')
+const { addUserToDB, checkIfUserExists, findUserById, findUserByEmail, editEmail, editPassword, checkIfEmailIsSame, deleteUserFromDB, checkIfPasswordIsSame } = require('../services/UserService')
 const { hashPassword, generateJwtWebToken, verifyPassword } = require('../Utils/validation');
 const { sendSuccess, sendError } = require('../Utils/Utils');
 
@@ -36,7 +36,7 @@ const registerUser = async (req, res) => {
 }
 
 const loginUser = async (req, res) => {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
         return sendError(res, 400, "Invalid Request");
@@ -45,22 +45,22 @@ const loginUser = async (req, res) => {
     try {
         const user = await findUserByEmail(email);
 
-        if(!user){
-            return sendError(res,404,"User Does not exist");
+        if (!user) {
+            return sendError(res, 404, "User Does not exist");
         }
 
-        const isPasswordValid = await verifyPassword(password,user.password);
+        const isPasswordValid = await verifyPassword(password, user.password);
 
-        if(isPasswordValid){
+        if (isPasswordValid) {
             const jwtToken = generateJwtWebToken(user._id);
-            const response = {id:user._id,email:user.email,token:jwtToken}
-            return sendSuccess(res,200,"Logged In",response)
+            const response = { id: user._id, email: user.email, token: jwtToken }
+            return sendSuccess(res, 200, "Logged In", response)
         }
 
 
     } catch (error) {
         console.log(error)
-        return sendError(res,400,error.message)
+        return sendError(res, 400, error.message)
     }
 }
 
@@ -79,4 +79,80 @@ const getLoggedInUserData = async (req, res) => {
     }
 }
 
-module.exports = { registerUser, loginUser, getLoggedInUserData };
+
+const updateUserEmail = async (req, res) => {
+    const userId = req.user.id;
+    const newEmail = req.body.email;
+
+    if (!newEmail) {
+        return sendError(res, 400, "No email provided");
+    }
+
+    try {
+        const isSameEmail = await checkIfEmailIsSame(userId, newEmail);
+        if (isSameEmail) {
+            return sendError(res, 400, "New email is same as current email.")
+        }
+        const updatedDoc = await editEmail(userId, newEmail);
+
+        if (!updatedDoc) {
+            return sendError(res, 400, "Update failed")
+        }
+
+        return sendSuccess(res, 200, "Email Updated", updatedDoc)
+
+    } catch (error) {
+
+        console.log(error.message);
+        return sendError(res, 400, error.message)
+    }
+}
+
+const updateUserPassword = async (req, res) => {
+    const userId = req.user;
+    const password = req.body.password;
+
+    if (!password) {
+        return sendError(res, 400, "Invalid Request")
+    }
+
+    try {
+
+        const newHashedPassword = await hashPassword(password);
+        const isPasswordSame = await checkIfPasswordIsSame(userId, newHashedPassword);
+
+        if (isPasswordSame) {
+            return sendError(res, 400, "New password is same as current email.")
+        }
+        const updatedDoc = await editPassword(userId, newHashedPassword);
+
+        if (!updatedDoc) {
+            return sendError(res, 400, "Update failed")
+        }
+
+        return sendSuccess(res, 200, "Email Updated", updatedDoc)
+
+
+    } catch (error) {
+        console.log(error.message);
+        return sendError(res, 400, error.message)
+    }
+}
+
+const deleteUser = async (req, res) => {
+    const userId = req.user.id
+
+    try {
+        const deletedUser = await deleteUserFromDB(userId);
+        if(!deletedUser){
+            return sendError(res,400,"Invalid Request")
+        }
+
+        return sendSuccess(res,200,"User deleted",deletedUser)
+    } catch (error) {
+        console.log(error.message);
+        throw error;
+    }
+}
+
+module.exports = { registerUser, loginUser, getLoggedInUserData, updateUserEmail, deleteUser, updateUserPassword };
