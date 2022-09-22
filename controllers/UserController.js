@@ -55,6 +55,8 @@ const loginUser = async (req, res) => {
             const jwtToken = generateJwtWebToken(user._id);
             const response = { id: user._id, email: user.email, token: jwtToken }
             return sendSuccess(res, 200, "Logged In", response)
+        } else{
+            return sendError(res, 400, "Incorrect Password")
         }
 
 

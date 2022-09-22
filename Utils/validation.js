@@ -10,15 +10,22 @@ const hashPassword = async (password) => {
     return hashedPassword
 }
 
-const verifyPassword = async (password,hashedPassword)=>{
-const isValid = await bcrypt.compare(password,hashedPassword);
-return isValid;
+const verifyPassword = async (password, hashedPassword) => {
+
+    try {
+        const isValid = await bcrypt.compare(password, hashedPassword);
+        return isValid;
+    } catch (error) {
+        throw error;
+    }
+
+
 }
 
-const generateJwtWebToken = (id)=>{
-    return jwt.sign({id},process.env.JWT_SECRET,{
-        expiresIn:'7d'
+const generateJwtWebToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '7d'
     })
 }
 
-    module.exports = { hashPassword ,generateJwtWebToken,verifyPassword}
+module.exports = { hashPassword, generateJwtWebToken, verifyPassword }
