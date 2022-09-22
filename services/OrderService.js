@@ -2,11 +2,10 @@
 
 // const db = client.db(process.env.DBNAME)
 const Order = require('../models/orderModel');
-const getAllOrdersService = async () => {
+const getAllOrdersService = async (id) => {
 
     try {
-        const orders = await Order.find();
-        console.log(orders);
+        const orders = await Order.find({user:id}).select("_id restaurantName cartItems cartValue");
         return orders
     } catch (error) {
         throw error
@@ -17,7 +16,6 @@ const getAllOrdersService = async () => {
 const addSingleOrderService = async (document) => {
     try {
         const createdOrder = await Order.create(document);
-        console.log(createdOrder);
         return createdOrder;
     } catch (error) {
         throw error
